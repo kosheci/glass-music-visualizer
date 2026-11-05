@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_vertical"
+    android:padding="20dp"
+    android:background="@drawable/widget_glass_background">
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:text="●  Яндекс Музыка  ·  GLASS"
+        android:textColor="#FFFFE9A1" android:textSize="13sp" android:textStyle="bold"/>
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="9dp"
+        android:text="▂ ▅ ▆ ▃ ▇ ▄ ▂ ▇ ▅ ▃ ▆ ▄ ▇ ▃ ▅ ▂ ▆ ▄"
+        android:textColor="#FFF9B5D5" android:textSize="18sp" android:letterSpacing="0.02"/>
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text="Нажмите для запуска живого спектра ↗"
+        android:textColor="#E6FFFFFF" android:textSize="11sp" />
+</LinearLayout>
