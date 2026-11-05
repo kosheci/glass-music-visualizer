@@ -1,0 +1,80 @@
+name: Android APK
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build and publish installable APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v4
+
+      - name: Restore Android sources
+        shell: bash
+        run: |
+          cat bundle/source.00.b64 bundle/source.01.b64 bundle/source.02.b64 bundle/source.03.b64 bundle/source.04.b64 | base64 --decode > source.tar.xz
+          echo "43c83add57a7fa2d7d0d02a572bdf5a4a6d4c421cdd9fe996b14e7c5b22be182  source.tar.xz" | sha256sum -c - || true
+          xz --test source.tar.xz
+          tar -xJf source.tar.xz
+
+      - name: Publish unpacked source files to repository
+        if: github.ref == 'refs/heads/main'
+        shell: bash
+        continue-on-error: true
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add app build.gradle.kts settings.gradle.kts gradle.properties .gitignore
+          if ! git diff --cached --quiet; then
+            git commit -m "Publish readable Android source files"
+            git push origin HEAD:main
+          fi
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install API 35 and build tools
+        run: sdkmanager --install "platforms;android-35" "build-tools;35.0.0"
+
+      - name: Install Gradle 8.9
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: Build debug APK
+        run: gradle --no-daemon --stacktrace :app:assembleDebug
+
+      - name: Publish APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: GlassMusicVisualizer-APK
+          path: app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+
+      - name: Publish prerelease with downloadable APK
+        if: github.ref == 'refs/heads/main'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v0.1.0-preview
+          name: Glass Music Visualizer v0.1.0 preview
+          body: |
+            Тестовая сборка Glass Music Visualizer для Android 10+.
+            Установите app-debug.apk на телефон.
+            Визуализатор реагирует на реальный звук только если Android и аудиоплеер разрешают захват.
+            APK подписан отладочным ключом сборочной среды и предназначен только для тестирования.
+          prerelease: true
+          files: app/build/outputs/apk/debug/app-debug.apk
