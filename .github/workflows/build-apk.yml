@@ -44,14 +44,13 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Install Android SDK components
-        shell: bash
-        run: |
-          SDK_ROOT="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-/usr/local/lib/android/sdk}}"
-          SDKMANAGER="$SDK_ROOT/cmdline-tools/16.0/bin/sdkmanager"
-          if [ ! -x "$SDKMANAGER" ]; then SDKMANAGER="$(command -v sdkmanager)"; fi
-          yes | "$SDKMANAGER" --licenses >/dev/null || true
-          "$SDKMANAGER" --install "platforms;android-35" "build-tools;35.0.0"
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v4
+        with:
+          packages: 'platform-tools'
+
+      - name: Install API 35 and build tools
+        run: sdkmanager --install "platforms;android-35" "build-tools;35.0.0"
 
       - name: Install Gradle 8.9
         uses: gradle/actions/setup-gradle@v4
