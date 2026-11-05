@@ -17,27 +17,6 @@ jobs:
       - name: Checkout project
         uses: actions/checkout@v4
 
-      - name: Restore Android sources
-        shell: bash
-        run: |
-          cat bundle/source.00.b64 bundle/source.01.b64 bundle/source.02.b64 bundle/source.03.b64 bundle/source.04.b64 | base64 --decode > source.tar.xz
-          echo "99490a24382db8f632f80aa379da7462bf0d838bd79ca1986b6952e303132efd  source.tar.xz" | sha256sum -c -
-          xz --test source.tar.xz
-          tar -xJf source.tar.xz
-
-      - name: Publish unpacked source files to repository
-        if: github.ref == 'refs/heads/main'
-        shell: bash
-        continue-on-error: true
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add app build.gradle.kts settings.gradle.kts gradle.properties .gitignore
-          if ! git diff --cached --quiet; then
-            git commit -m "Publish readable Android source files"
-            git push origin HEAD:main
-          fi
-
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:

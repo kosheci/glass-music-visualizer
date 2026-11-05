@@ -62,7 +62,7 @@ class GlassSpectrumView(context: Context, private val floating: Boolean = false)
         p.shader=null
         fill(0x40F4C4F4); p.shader=RadialGradient(15f,0f,230f,0x55DAACFA,0x002C2954,Shader.TileMode.CLAMP)
         canvas.drawRoundRect(card,31f,31f,p);p.shader=null
-        fill(0xA7FFFFFF);p.style=Paint.Style.STROKE;p.strokeWidth=1.3f
+        fill(0xA7FFFFFF.toInt());p.style=Paint.Style.STROKE;p.strokeWidth=1.3f
         canvas.drawRoundRect(card,31f,31f,p);p.style=Paint.Style.FILL
         fill(0x38FFFFFF);canvas.drawRoundRect(RectF(8f,6f,352f,9f),2f,2f,p)
         // Brand header + yellow glyph
